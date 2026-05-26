@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { Navbar } from '@/components/nav/Navbar'
 import { Toaster } from '@/components/ui/sonner'
+import { Heart } from 'lucide-react'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
     template: '%s | KindredAdvice',
   },
   description:
-    'A safe, warm community where you can share what\'s on your heart and get genuine advice from people who care.',
+    "A safe, warm community where you can share what's on your heart and get genuine advice from people who care.",
   openGraph: {
     title: 'KindredAdvice',
     description: 'A safe community for relationship advice and support.',
@@ -41,23 +42,36 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-background">
         <Navbar />
         <main className="flex-1">{children}</main>
-        <footer className="border-t border-border bg-card py-8 mt-12">
-          <div className="max-w-6xl mx-auto px-4 text-center text-sm text-muted-foreground space-y-2">
-            <p className="font-semibold text-foreground">KindredAdvice</p>
-            <p>A safe space to share, listen, and grow together.</p>
-            <div className="flex justify-center gap-6">
-              <a href="/guidelines" className="hover:text-primary transition-colors">
+
+        <footer className="border-t border-border bg-card/50 py-12 mt-12">
+          <div className="max-w-6xl mx-auto px-4 flex flex-col items-center gap-5 text-center">
+            {/* Logo */}
+            <div className="flex items-center gap-2.5 font-extrabold text-lg">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-600 to-violet-800 flex items-center justify-center shadow-md shadow-violet-500/20">
+                <Heart className="w-3.5 h-3.5 fill-white stroke-white" />
+              </div>
+              <span className="gradient-text-purple">KindredAdvice</span>
+            </div>
+
+            <p className="text-sm text-muted-foreground max-w-sm">
+              A safe space to share, listen, and grow together. Real advice from real people who care.
+            </p>
+
+            <div className="flex gap-6 text-sm">
+              <a href="/guidelines" className="text-muted-foreground hover:text-primary transition-colors font-medium">
                 Community Guidelines
               </a>
-              <a href="/requests" className="hover:text-primary transition-colors">
+              <a href="/requests" className="text-muted-foreground hover:text-primary transition-colors font-medium">
                 Browse Requests
               </a>
             </div>
-            <p className="text-xs mt-4">
-              &copy; {new Date().getFullYear()} KindredAdvice. Be kind.
+
+            <p className="text-xs text-muted-foreground/50">
+              &copy; {new Date().getFullYear()} KindredAdvice &mdash; Be kind.
             </p>
           </div>
         </footer>
+
         <Toaster richColors position="top-right" />
       </body>
     </html>

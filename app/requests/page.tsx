@@ -4,7 +4,7 @@ import type { HelpRequest, Category } from '@/lib/types'
 import { CATEGORY_LABELS } from '@/lib/types'
 import { buttonVariants } from '@/components/ui/button'
 import Link from 'next/link'
-import { MessageSquare } from 'lucide-react'
+import { MessageSquare, ArrowLeft, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface SearchParams {
@@ -13,6 +13,13 @@ interface SearchParams {
 }
 
 const PAGE_SIZE = 10
+
+const CATEGORY_PILL_ACTIVE: Record<string, string> = {
+  romantic: 'bg-rose-500 text-white border-rose-500 hover:bg-rose-600',
+  family: 'bg-amber-500 text-white border-amber-500 hover:bg-amber-600',
+  friendship: 'bg-teal-500 text-white border-teal-500 hover:bg-teal-600',
+  general: 'bg-violet-600 text-white border-violet-600 hover:bg-violet-700',
+}
 
 export default async function RequestsPage({
   searchParams,
@@ -44,48 +51,95 @@ export default async function RequestsPage({
   const categories = ['romantic', 'family', 'friendship', 'general'] as Category[]
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Browse Requests</h1>
-        <p className="text-muted-foreground mt-2">Real people, real situations. Offer your perspective or just read along.</p>
-      </div>
-
-      <div className="flex flex-wrap gap-2 mb-8">
-        <Link href="/requests" className={cn(buttonVariants({ variant: !category ? 'default' : 'outline', size: 'sm' }))}>All</Link>
-        {categories.map((cat) => (
-          <Link key={cat} href={`/requests?category=${cat}`} className={cn(buttonVariants({ variant: category === cat ? 'default' : 'outline', size: 'sm' }))}>
-            {CATEGORY_LABELS[cat]}
-          </Link>
-        ))}
-      </div>
-
-      {requests && requests.length > 0 ? (
-        <>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {(requests as HelpRequest[]).map((req) => (
-              <RequestCard key={req.id} request={req} />
-            ))}
-          </div>
-          {totalPages > 1 && (
-            <div className="flex justify-center gap-2 mt-10">
-              {page > 1 && (
-                <Link href={`/requests?${category ? `category=${category}&` : ''}page=${page - 1}`} className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}>Previous</Link>
-              )}
-              <span className="flex items-center px-3 text-sm text-muted-foreground">Page {page} of {totalPages}</span>
-              {page < totalPages && (
-                <Link href={`/requests?${category ? `category=${category}&` : ''}page=${page + 1}`} className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}>Next</Link>
-              )}
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="text-center py-20 text-muted-foreground">
-          <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-30" />
-          <p className="text-lg font-medium">No requests found</p>
-          <p className="text-sm mt-1">{category ? `No ${CATEGORY_LABELS[category]} requests yet.` : 'Be the first to ask!'}</p>
-          <Link href="/requests/new" className={cn(buttonVariants(), 'mt-6')}>Ask for Advice</Link>
+    <div>
+      {/* Page header */}
+      <div style={{ background: 'linear-gradient(135deg, #f5f3ff 0%, #fdf8f6 60%, #fff1f2 100%)' }} className="border-b border-border/50">
+        <div className="max-w-6xl mx-auto px-4 py-10">
+          <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-1">Community</p>
+          <h1 className="text-3xl font-extrabold">Browse Requests</h1>
+          <p className="text-muted-foreground mt-1.5">Real people, real situations. Offer your perspective or just read along.</p>
         </div>
-      )}
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Category filters */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          <Link
+            href="/requests"
+            className={cn(
+              'rounded-full px-4 py-1.5 text-sm font-semibold border transition-all duration-150',
+              !category
+                ? 'bg-foreground text-background border-foreground'
+                : 'bg-card text-muted-foreground border-border hover:border-foreground/30 hover:text-foreground'
+            )}
+          >
+            All
+          </Link>
+          {categories.map((cat) => (
+            <Link
+              key={cat}
+              href={`/requests?category=${cat}`}
+              className={cn(
+                'rounded-full px-4 py-1.5 text-sm font-semibold border transition-all duration-150',
+                category === cat
+                  ? CATEGORY_PILL_ACTIVE[cat]
+                  : 'bg-card text-muted-foreground border-border hover:border-foreground/30 hover:text-foreground'
+              )}
+            >
+              {CATEGORY_LABELS[cat]}
+            </Link>
+          ))}
+        </div>
+
+        {requests && requests.length > 0 ? (
+          <>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {(requests as HelpRequest[]).map((req) => (
+                <RequestCard key={req.id} request={req} />
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-3 mt-12">
+                {page > 1 ? (
+                  <Link
+                    href={`/requests?${category ? `category=${category}&` : ''}page=${page - 1}`}
+                    className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-1')}
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" /> Previous
+                  </Link>
+                ) : (
+                  <span />
+                )}
+                <span className="text-sm text-muted-foreground font-medium px-2">
+                  Page {page} of {totalPages}
+                </span>
+                {page < totalPages ? (
+                  <Link
+                    href={`/requests?${category ? `category=${category}&` : ''}page=${page + 1}`}
+                    className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-1')}
+                  >
+                    Next <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                ) : (
+                  <span />
+                )}
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="text-center py-24 bg-card rounded-3xl border border-border">
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <MessageSquare className="w-8 h-8 text-primary opacity-60" />
+            </div>
+            <p className="font-bold text-lg">No requests found</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              {category ? `No ${CATEGORY_LABELS[category]} requests yet.` : 'Be the first to ask!'}
+            </p>
+            <Link href="/requests/new" className={cn(buttonVariants(), 'mt-6')}>Ask for Advice</Link>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
