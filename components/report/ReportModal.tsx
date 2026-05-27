@@ -37,10 +37,11 @@ interface ReportModalProps {
   targetId: string
   isAdmin?: boolean
   onDeleted?: () => void
+  redirectOnDelete?: string
   children: React.ReactNode
 }
 
-export function ReportModal({ targetType, targetId, isAdmin = false, onDeleted, children }: ReportModalProps) {
+export function ReportModal({ targetType, targetId, isAdmin = false, onDeleted, redirectOnDelete, children }: ReportModalProps) {
   const [open, setOpen] = useState(false)
   const [reason, setReason] = useState('')
   const [note, setNote] = useState('')
@@ -61,7 +62,11 @@ export function ReportModal({ targetType, targetId, isAdmin = false, onDeleted, 
     setLoading(false)
     setOpen(false)
     onDeleted?.()
-    router.refresh()
+    if (redirectOnDelete) {
+      router.push(redirectOnDelete)
+    } else {
+      router.refresh()
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

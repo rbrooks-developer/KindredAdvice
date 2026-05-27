@@ -112,7 +112,7 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
 
         {isAuthenticated && (
           <div className="flex justify-end mt-4 pt-4 border-t border-border">
-            <ReportModal targetType="request" targetId={req.id} isAdmin={isAdmin}>
+            <ReportModal targetType="request" targetId={req.id} isAdmin={isAdmin} redirectOnDelete="/requests">
               <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive transition-colors">
                 <Flag className="w-3 h-3" />{isAdmin ? 'Delete request' : 'Report this request'}
               </button>
