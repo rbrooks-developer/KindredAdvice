@@ -69,6 +69,7 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
   const sortedImages = (req.request_images ?? []).sort(
     (a: any, b: any) => a.display_order - b.display_order
   )
+  const visibleImages = sortedImages.filter((img: any) => !img.is_hidden)
   const isOwner = user?.id === req.user_id
   const highestDisplayOrder = sortedImages.length > 0
     ? Math.max(...sortedImages.map((img: any) => img.display_order))
@@ -115,11 +116,11 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
           <ImageGallery images={sortedImages} showReport={isAuthenticated} isAdmin={isAdmin} />
         )}
 
-        {isOwner && sortedImages.length < 5 && (
+        {isOwner && visibleImages.length < 5 && (
           <AddRequestImages
             requestId={req.id}
             userId={req.user_id}
-            currentCount={sortedImages.length}
+            currentCount={visibleImages.length}
             highestDisplayOrder={highestDisplayOrder}
           />
         )}
