@@ -11,7 +11,7 @@ import { ReplyList } from '@/components/replies/ReplyList'
 import { ReplyForm } from '@/components/replies/ReplyForm'
 import { ReportModal } from '@/components/report/ReportModal'
 import { formatDistanceToNow } from 'date-fns'
-import { Flag, Lock, AlertTriangle, Shield } from 'lucide-react'
+import { Flag, Lock, AlertTriangle, Shield, Clock } from 'lucide-react'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -119,6 +119,15 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
           </div>
         )}
       </article>
+
+      {req.is_private && (
+        <Alert className="mb-6 border-violet-200 bg-violet-50">
+          <Clock className="h-4 w-4 text-violet-600" />
+          <AlertDescription className="text-violet-800 text-sm">
+            <strong>Private Request:</strong> Our admins do their best to reply as soon as possible, but please allow up to <strong>12–24 hours</strong> for a response. Thank you for your patience.
+          </AlertDescription>
+        </Alert>
+      )}
 
       <Alert className="mb-6 border-amber-200 bg-amber-50">
         <AlertTriangle className="h-4 w-4 text-amber-600" />
