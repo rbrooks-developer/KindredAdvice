@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Flag, X } from 'lucide-react'
 import type { RequestImage } from '@/lib/types'
@@ -39,11 +38,10 @@ export function ImageGallery({ images, showReport = true, isAdmin = false }: Ima
                 onClick={() => setLightboxSrc(url)}
                 className="block w-28 h-28 rounded-lg overflow-hidden border border-border hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={url}
                   alt="Attached image"
-                  width={112}
-                  height={112}
                   className="object-cover w-full h-full"
                 />
               </button>
@@ -69,11 +67,10 @@ export function ImageGallery({ images, showReport = true, isAdmin = false }: Ima
               >
                 <X className="w-4 h-4" />
               </button>
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={lightboxSrc}
                 alt="Full size image"
-                width={900}
-                height={600}
                 className="rounded object-contain max-h-[80vh] w-full"
               />
             </div>
