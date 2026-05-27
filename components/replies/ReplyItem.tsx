@@ -99,7 +99,7 @@ export function ReplyItem({ reply, children = [], showReport, isAuthenticated, i
           {showReport && (
             <ReportModal targetType="reply" targetId={reply.id} isAdmin={isAdmin}>
               <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100 shrink-0">
-                <Flag className="w-3 h-3" />Report
+                <Flag className="w-3 h-3" />{isAdmin ? 'Delete reply' : 'Report'}
               </button>
             </ReportModal>
           )}
@@ -181,7 +181,7 @@ export function ReplyItem({ reply, children = [], showReport, isAuthenticated, i
                   {showReport && (
                     <ReportModal targetType="reply" targetId={child.id} isAdmin={isAdmin}>
                       <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100 shrink-0">
-                        <Flag className="w-3 h-3" />Report
+                        <Flag className="w-3 h-3" />{isAdmin ? 'Delete reply' : 'Report'}
                       </button>
                     </ReportModal>
                   )}
