@@ -35,7 +35,12 @@ export function Navbar() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
-      if (!session?.user) setProfile(null)
+      if (session?.user) {
+        supabase.from('profiles').select('*').eq('id', session.user.id).single()
+          .then(({ data }) => setProfile(data))
+      } else {
+        setProfile(null)
+      }
     })
 
     const onScroll = () => setScrolled(window.scrollY > 8)
