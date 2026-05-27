@@ -36,10 +36,11 @@ interface ReportModalProps {
   targetType: ReportTargetType
   targetId: string
   isAdmin?: boolean
+  onDeleted?: () => void
   children: React.ReactNode
 }
 
-export function ReportModal({ targetType, targetId, isAdmin = false, children }: ReportModalProps) {
+export function ReportModal({ targetType, targetId, isAdmin = false, onDeleted, children }: ReportModalProps) {
   const [open, setOpen] = useState(false)
   const [reason, setReason] = useState('')
   const [note, setNote] = useState('')
@@ -59,6 +60,7 @@ export function ReportModal({ targetType, targetId, isAdmin = false, children }:
     toast.success('Content deleted.')
     setLoading(false)
     setOpen(false)
+    onDeleted?.()
     router.refresh()
   }
 

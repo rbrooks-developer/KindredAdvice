@@ -27,6 +27,8 @@ export function ReplyItem({ reply, children = [], showReport, isAuthenticated, i
   const [showForm, setShowForm] = useState(false)
   const [body, setBody] = useState('')
   const [loading, setLoading] = useState(false)
+  const [deleted, setDeleted] = useState(false)
+  const [deletedChildIds, setDeletedChildIds] = useState<Set<string>>(new Set())
   const router = useRouter()
   const supabase = createClient()
 
@@ -74,6 +76,8 @@ export function ReplyItem({ reply, children = [], showReport, isAuthenticated, i
     }
   }
 
+  if (deleted) return null
+
   return (
     <div>
       {/* Parent reply card */}
@@ -97,7 +101,7 @@ export function ReplyItem({ reply, children = [], showReport, isAuthenticated, i
             </div>
           </div>
           {showReport && (
-            <ReportModal targetType="reply" targetId={reply.id} isAdmin={isAdmin}>
+            <ReportModal targetType="reply" targetId={reply.id} isAdmin={isAdmin} onDeleted={() => setDeleted(true)}>
               <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100 shrink-0">
                 <Flag className="w-3 h-3" />{isAdmin ? 'Delete reply' : 'Report'}
               </button>
@@ -148,9 +152,9 @@ export function ReplyItem({ reply, children = [], showReport, isAuthenticated, i
       </div>
 
       {/* Child replies — indented */}
-      {children.length > 0 && (
+      {children.filter((c) => !deletedChildIds.has(c.id)).length > 0 && (
         <div className="mt-2 ml-6 pl-4 border-l-2 border-border/50 space-y-2">
-          {children.map((child) => {
+          {children.filter((c) => !deletedChildIds.has(c.id)).map((child) => {
             const childProfile = child.profiles
             const childInitials = childProfile?.username?.slice(0, 2).toUpperCase() ?? '??'
             const childTimeAgo = formatDistanceToNow(new Date(child.created_at), { addSuffix: true })
@@ -179,7 +183,7 @@ export function ReplyItem({ reply, children = [], showReport, isAuthenticated, i
                     </div>
                   </div>
                   {showReport && (
-                    <ReportModal targetType="reply" targetId={child.id} isAdmin={isAdmin}>
+                    <ReportModal targetType="reply" targetId={child.id} isAdmin={isAdmin} onDeleted={() => setDeletedChildIds((prev) => new Set([...prev, child.id]))}>
                       <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100 shrink-0">
                         <Flag className="w-3 h-3" />{isAdmin ? 'Delete reply' : 'Report'}
                       </button>
