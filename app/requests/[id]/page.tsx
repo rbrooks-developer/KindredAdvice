@@ -116,11 +116,11 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
           <ImageGallery images={sortedImages} showReport={isAuthenticated} isAdmin={isAdmin} />
         )}
 
-        {isOwner && visibleImages.length < 5 && (
+        {isOwner && (
           <AddRequestImages
             requestId={req.id}
             userId={req.user_id}
-            currentCount={visibleImages.length}
+            existingImages={visibleImages as any[]}
             highestDisplayOrder={highestDisplayOrder}
           />
         )}
