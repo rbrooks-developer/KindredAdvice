@@ -72,6 +72,7 @@ export function AvatarUpload({ userId, currentAvatarUrl, initials }: AvatarUploa
     } else {
       setAvatarUrl(urlWithBust)
       toast.success('Avatar updated!')
+      window.dispatchEvent(new CustomEvent('avatar-updated', { detail: { url: urlWithBust } }))
       router.refresh()
     }
 

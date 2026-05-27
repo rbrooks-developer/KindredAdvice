@@ -41,9 +41,16 @@ export function Navbar() {
     const onScroll = () => setScrolled(window.scrollY > 8)
     window.addEventListener('scroll', onScroll, { passive: true })
 
+    const onAvatarUpdated = (e: Event) => {
+      const url = (e as CustomEvent<{ url: string }>).detail.url
+      setProfile((prev) => prev ? { ...prev, avatar_url: url } : prev)
+    }
+    window.addEventListener('avatar-updated', onAvatarUpdated)
+
     return () => {
       subscription.unsubscribe()
       window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('avatar-updated', onAvatarUpdated)
     }
   }, [])
 

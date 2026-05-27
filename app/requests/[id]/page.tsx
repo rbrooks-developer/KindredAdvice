@@ -38,8 +38,11 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
 
   if (req.is_private) {
     if (!user) notFound()
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-    if (profile?.role !== 'admin') notFound()
+    const isOwner = user.id === req.user_id
+    if (!isOwner) {
+      const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+      if (profile?.role !== 'admin') notFound()
+    }
   }
 
   const { data: replies } = await supabase
