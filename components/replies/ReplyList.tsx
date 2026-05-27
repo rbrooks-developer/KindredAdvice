@@ -6,9 +6,10 @@ interface ReplyListProps {
   showReport?: boolean
   isAuthenticated?: boolean
   isBanned?: boolean
+  isAdmin?: boolean
 }
 
-export function ReplyList({ replies, showReport = true, isAuthenticated = false, isBanned = false }: ReplyListProps) {
+export function ReplyList({ replies, showReport = true, isAuthenticated = false, isBanned = false, isAdmin = false }: ReplyListProps) {
   if (replies.length === 0) {
     return (
       <div className="text-center py-10 text-muted-foreground text-sm">
@@ -34,6 +35,7 @@ export function ReplyList({ replies, showReport = true, isAuthenticated = false,
           showReport={showReport}
           isAuthenticated={isAuthenticated}
           isBanned={isBanned}
+          isAdmin={isAdmin}
         />
       ))}
     </div>

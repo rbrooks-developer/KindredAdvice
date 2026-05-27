@@ -11,9 +11,10 @@ import { Dialog, DialogContent } from '@/components/ui/dialog'
 interface ImageGalleryProps {
   images: RequestImage[]
   showReport?: boolean
+  isAdmin?: boolean
 }
 
-export function ImageGallery({ images, showReport = true }: ImageGalleryProps) {
+export function ImageGallery({ images, showReport = true, isAdmin = false }: ImageGalleryProps) {
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null)
   const supabase = createClient()
 
@@ -47,7 +48,7 @@ export function ImageGallery({ images, showReport = true }: ImageGalleryProps) {
                 />
               </button>
               {showReport && (
-                <ReportModal targetType="image" targetId={img.id}>
+                <ReportModal targetType="image" targetId={img.id} isAdmin={isAdmin}>
                   <button className="absolute top-1 right-1 bg-black/60 rounded p-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Flag className="w-3 h-3 text-white" />
                   </button>

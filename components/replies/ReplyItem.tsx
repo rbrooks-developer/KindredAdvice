@@ -20,9 +20,10 @@ interface ReplyItemProps {
   showReport: boolean
   isAuthenticated: boolean
   isBanned: boolean
+  isAdmin?: boolean
 }
 
-export function ReplyItem({ reply, children = [], showReport, isAuthenticated, isBanned }: ReplyItemProps) {
+export function ReplyItem({ reply, children = [], showReport, isAuthenticated, isBanned, isAdmin = false }: ReplyItemProps) {
   const [showForm, setShowForm] = useState(false)
   const [body, setBody] = useState('')
   const [loading, setLoading] = useState(false)
@@ -96,7 +97,7 @@ export function ReplyItem({ reply, children = [], showReport, isAuthenticated, i
             </div>
           </div>
           {showReport && (
-            <ReportModal targetType="reply" targetId={reply.id}>
+            <ReportModal targetType="reply" targetId={reply.id} isAdmin={isAdmin}>
               <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100 shrink-0">
                 <Flag className="w-3 h-3" />Report
               </button>
@@ -178,7 +179,7 @@ export function ReplyItem({ reply, children = [], showReport, isAuthenticated, i
                     </div>
                   </div>
                   {showReport && (
-                    <ReportModal targetType="reply" targetId={child.id}>
+                    <ReportModal targetType="reply" targetId={child.id} isAdmin={isAdmin}>
                       <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100 shrink-0">
                         <Flag className="w-3 h-3" />Report
                       </button>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import type { ReportTargetType } from '@/lib/types'
@@ -34,15 +35,32 @@ const REASONS = [
 interface ReportModalProps {
   targetType: ReportTargetType
   targetId: string
+  isAdmin?: boolean
   children: React.ReactNode
 }
 
-export function ReportModal({ targetType, targetId, children }: ReportModalProps) {
+export function ReportModal({ targetType, targetId, isAdmin = false, children }: ReportModalProps) {
   const [open, setOpen] = useState(false)
   const [reason, setReason] = useState('')
   const [note, setNote] = useState('')
   const [loading, setLoading] = useState(false)
   const supabase = createClient()
+  const router = useRouter()
+
+  const handleAdminDelete = async () => {
+    setLoading(true)
+    if (targetType === 'request') {
+      await supabase.from('help_requests').update({ status: 'deleted' }).eq('id', targetId)
+    } else if (targetType === 'reply') {
+      await supabase.from('replies').update({ status: 'deleted' }).eq('id', targetId)
+    } else if (targetType === 'image') {
+      await supabase.from('request_images').update({ is_hidden: true }).eq('id', targetId)
+    }
+    toast.success('Content deleted.')
+    setLoading(false)
+    setOpen(false)
+    router.refresh()
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -74,26 +92,7 @@ export function ReportModal({ targetType, targetId, children }: ReportModalProps
       return
     }
 
-    // Admins instantly hide content without waiting for the 5-report threshold
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (profile?.role === 'admin') {
-      if (targetType === 'request') {
-        await supabase.from('help_requests').update({ status: 'hidden' }).eq('id', targetId)
-      } else if (targetType === 'reply') {
-        await supabase.from('replies').update({ status: 'hidden' }).eq('id', targetId)
-      } else if (targetType === 'image') {
-        await supabase.from('request_images').update({ is_hidden: true }).eq('id', targetId)
-      }
-      toast.success('Content has been hidden.')
-    } else {
-      toast.success('Thank you — our team will review this report.')
-    }
-
+    toast.success('Thank you — our team will review this report.')
     setLoading(false)
     setOpen(false)
     setReason('')
@@ -105,37 +104,56 @@ export function ReportModal({ targetType, targetId, children }: ReportModalProps
       <span onClick={() => setOpen(true)} style={{ cursor: 'pointer' }}>{children}</span>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Report Content</DialogTitle>
-            <DialogDescription>
-              Help us keep KindredAdvice safe. Our team reviews all reports within 24 hours.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4 mt-2">
-            <div className="space-y-2">
-              <Label htmlFor="reason">Reason</Label>
-              <Select onValueChange={(v: string | null) => { if (v) setReason(v) }}>
-                <SelectTrigger id="reason">
-                  <SelectValue placeholder="Select a reason…" />
-                </SelectTrigger>
-                <SelectContent>
-                  {REASONS.map((r) => (
-                    <SelectItem key={r} value={r}>{r}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="note">Additional context (optional)</Label>
-              <Textarea id="note" placeholder="Provide any additional details…" value={note} onChange={(e) => setNote(e.target.value)} rows={3} maxLength={500} />
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button type="submit" variant="destructive" disabled={!reason || loading}>
-                {loading ? 'Submitting…' : 'Submit Report'}
-              </Button>
-            </div>
-          </form>
+          {isAdmin ? (
+            <>
+              <DialogHeader>
+                <DialogTitle>Delete Content</DialogTitle>
+                <DialogDescription>
+                  This will permanently delete the {targetType === 'image' ? 'image' : targetType}. This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex justify-end gap-2 mt-4">
+                <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                <Button type="button" variant="destructive" disabled={loading} onClick={handleAdminDelete}>
+                  {loading ? 'Deleting…' : 'Delete'}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <DialogHeader>
+                <DialogTitle>Report Content</DialogTitle>
+                <DialogDescription>
+                  Help us keep KindredAdvice safe. Our team reviews all reports within 24 hours.
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} className="space-y-4 mt-2">
+                <div className="space-y-2">
+                  <Label htmlFor="reason">Reason</Label>
+                  <Select onValueChange={(v: string | null) => { if (v) setReason(v) }}>
+                    <SelectTrigger id="reason">
+                      <SelectValue placeholder="Select a reason…" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {REASONS.map((r) => (
+                        <SelectItem key={r} value={r}>{r}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="note">Additional context (optional)</Label>
+                  <Textarea id="note" placeholder="Provide any additional details…" value={note} onChange={(e) => setNote(e.target.value)} rows={3} maxLength={500} />
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                  <Button type="submit" variant="destructive" disabled={!reason || loading}>
+                    {loading ? 'Submitting…' : 'Submit Report'}
+                  </Button>
+                </div>
+              </form>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </>

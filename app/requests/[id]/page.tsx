@@ -60,6 +60,7 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
 
   const isAuthenticated = !!user
   const isBanned = userProfile !== null && userProfile?.ban_status !== 'active'
+  const isAdmin = userProfile?.role === 'admin'
   const authorProfile = req.profiles as { username: string; avatar_url: string | null; role: string }
   const initials = authorProfile?.username?.slice(0, 2).toUpperCase() ?? '??'
   const timeAgo = formatDistanceToNow(new Date(req.created_at), { addSuffix: true })
@@ -106,14 +107,14 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
         <p className="text-foreground leading-relaxed whitespace-pre-wrap">{req.body}</p>
 
         {sortedImages.length > 0 && (
-          <ImageGallery images={sortedImages} showReport={isAuthenticated} />
+          <ImageGallery images={sortedImages} showReport={isAuthenticated} isAdmin={isAdmin} />
         )}
 
         {isAuthenticated && (
           <div className="flex justify-end mt-4 pt-4 border-t border-border">
-            <ReportModal targetType="request" targetId={req.id}>
+            <ReportModal targetType="request" targetId={req.id} isAdmin={isAdmin}>
               <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive transition-colors">
-                <Flag className="w-3 h-3" />Report this request
+                <Flag className="w-3 h-3" />{isAdmin ? 'Delete request' : 'Report this request'}
               </button>
             </ReportModal>
           </div>
@@ -145,6 +146,7 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
           showReport={isAuthenticated}
           isAuthenticated={isAuthenticated}
           isBanned={!!isBanned}
+          isAdmin={isAdmin}
         />
       </section>
 
