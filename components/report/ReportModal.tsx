@@ -52,6 +52,7 @@ export function ReportModal({ targetType, targetId, isAdmin = false, onDeleted, 
   const handleAdminDelete = async () => {
     setLoading(true)
     if (targetType === 'request') {
+      await supabase.from('replies').update({ status: 'deleted' }).eq('request_id', targetId)
       await supabase.from('help_requests').update({ status: 'deleted' }).eq('id', targetId)
     } else if (targetType === 'reply') {
       await supabase.from('replies').update({ status: 'deleted' }).eq('id', targetId)
