@@ -11,7 +11,7 @@ import { ReplyList } from '@/components/replies/ReplyList'
 import { ReplyForm } from '@/components/replies/ReplyForm'
 import { ReportModal } from '@/components/report/ReportModal'
 import { formatDistanceToNow } from 'date-fns'
-import { Flag, Lock, AlertTriangle } from 'lucide-react'
+import { Flag, Lock, AlertTriangle, Shield } from 'lucide-react'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -57,7 +57,7 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
 
   const isAuthenticated = !!user
   const isBanned = userProfile !== null && userProfile?.ban_status !== 'active'
-  const authorProfile = req.profiles as { username: string; avatar_url: string | null }
+  const authorProfile = req.profiles as { username: string; avatar_url: string | null; role: string }
   const initials = authorProfile?.username?.slice(0, 2).toUpperCase() ?? '??'
   const timeAgo = formatDistanceToNow(new Date(req.created_at), { addSuffix: true })
 
@@ -82,7 +82,14 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
               <AvatarFallback className="bg-primary text-primary-foreground">{initials}</AvatarFallback>
             </Avatar>
             <div className="min-w-0">
-              <p className="font-medium text-sm">{authorProfile?.username ?? 'Anonymous'}</p>
+              <div className="flex items-center gap-2">
+                <p className="font-medium text-sm">{authorProfile?.username ?? 'Anonymous'}</p>
+                {authorProfile?.role === 'admin' && (
+                  <Badge variant="outline" className="text-xs text-primary border-primary/40 flex items-center gap-1 shrink-0">
+                    <Shield className="w-3 h-3" />Admin
+                  </Badge>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground">{timeAgo}</p>
             </div>
           </div>
@@ -121,7 +128,12 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
         <h2 className="text-xl font-bold mb-5">
           {(replies?.length ?? 0)} {replies?.length === 1 ? 'Reply' : 'Replies'}
         </h2>
-        <ReplyList replies={(replies ?? []) as Reply[]} showReport={isAuthenticated} />
+        <ReplyList
+          replies={(replies ?? []) as Reply[]}
+          showReport={isAuthenticated}
+          isAuthenticated={isAuthenticated}
+          isBanned={!!isBanned}
+        />
       </section>
 
       <section className="mt-8 pt-8 border-t border-border">

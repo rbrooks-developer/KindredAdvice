@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
+import { getSecondsRemaining, rateLimitErrorMessage } from '@/lib/rateLimit'
 import type { Category } from '@/lib/types'
 import { CATEGORY_LABELS } from '@/lib/types'
 import { Button } from '@/components/ui/button'
@@ -95,6 +96,13 @@ export default function NewRequestPage() {
       return
     }
 
+    const remaining = await getSecondsRemaining(supabase, user.id)
+    if (remaining > 0) {
+      toast.error(rateLimitErrorMessage(remaining))
+      setLoading(false)
+      return
+    }
+
     // Insert request
     const { data: newRequest, error: requestError } = await supabase
       .from('help_requests')
@@ -109,7 +117,11 @@ export default function NewRequestPage() {
       .single()
 
     if (requestError || !newRequest) {
-      toast.error('Could not create your request. Please try again.')
+      if (requestError?.message?.includes('RATE_LIMIT')) {
+        toast.error('Please wait 2 minutes between posts.')
+      } else {
+        toast.error('Could not create your request. Please try again.')
+      }
       setLoading(false)
       return
     }

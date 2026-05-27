@@ -48,6 +48,7 @@ export interface Reply {
   id: string
   request_id: string
   user_id: string
+  parent_id: string | null
   body: string
   is_admin_reply: boolean
   status: ReplyStatus

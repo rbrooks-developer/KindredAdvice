@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { getSecondsRemaining, rateLimitErrorMessage } from '@/lib/rateLimit'
 
 interface ReplyFormProps {
   requestId: string
@@ -62,16 +63,34 @@ export function ReplyForm({ requestId, isAuthenticated, isBanned }: ReplyFormPro
       return
     }
 
+    const remaining = await getSecondsRemaining(supabase, user.id)
+    if (remaining > 0) {
+      toast.error(rateLimitErrorMessage(remaining))
+      setLoading(false)
+      return
+    }
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
     const { error } = await supabase.from('replies').insert({
       request_id: requestId,
       user_id: user.id,
       body: body.trim(),
+      is_admin_reply: profile?.role === 'admin',
     })
 
     setLoading(false)
 
     if (error) {
-      toast.error('Could not post your reply. Please try again.')
+      if (error.message?.includes('RATE_LIMIT')) {
+        toast.error('Please wait 2 minutes between posts.')
+      } else {
+        toast.error('Could not post your reply. Please try again.')
+      }
     } else {
       toast.success('Reply posted!')
       setBody('')
