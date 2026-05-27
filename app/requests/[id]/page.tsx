@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ImageGallery } from '@/components/images/ImageGallery'
+import { AddRequestImages } from '@/components/images/AddRequestImages'
 import { ReplyList } from '@/components/replies/ReplyList'
 import { ReplyForm } from '@/components/replies/ReplyForm'
 import { ReportModal } from '@/components/report/ReportModal'
@@ -68,6 +69,10 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
   const sortedImages = (req.request_images ?? []).sort(
     (a: any, b: any) => a.display_order - b.display_order
   )
+  const isOwner = user?.id === req.user_id
+  const highestDisplayOrder = sortedImages.length > 0
+    ? Math.max(...sortedImages.map((img: any) => img.display_order))
+    : -1
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
@@ -108,6 +113,15 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
 
         {sortedImages.length > 0 && (
           <ImageGallery images={sortedImages} showReport={isAuthenticated} isAdmin={isAdmin} />
+        )}
+
+        {isOwner && sortedImages.length < 5 && (
+          <AddRequestImages
+            requestId={req.id}
+            userId={req.user_id}
+            currentCount={sortedImages.length}
+            highestDisplayOrder={highestDisplayOrder}
+          />
         )}
 
         {isAuthenticated && (
