@@ -52,7 +52,11 @@ export function Navbar() {
     window.location.href = '/'
   }
 
-  const initials = profile?.username ? profile.username.slice(0, 2).toUpperCase() : '??'
+  const displayUsername =
+    profile?.username ??
+    user?.user_metadata?.username ??
+    user?.email?.split('@')[0]
+  const initials = displayUsername ? displayUsername.slice(0, 2).toUpperCase() : '??'
 
   return (
     <header className={cn(

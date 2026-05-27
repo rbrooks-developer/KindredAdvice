@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 
-const COOLDOWN_SECONDS = 120
+const COOLDOWN_SECONDS = 60
 
 export async function getSecondsRemaining(supabase: SupabaseClient, userId: string): Promise<number> {
   const [{ data: lastRequest }, { data: lastReply }] = await Promise.all([

@@ -4,6 +4,7 @@ import type { HelpRequest } from '@/lib/types'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { RequestCard } from '@/components/requests/RequestCard'
+import { AvatarUpload } from '@/components/profile/AvatarUpload'
 import { formatDistanceToNow } from 'date-fns'
 import { CalendarDays, MessageSquare, Shield } from 'lucide-react'
 
@@ -21,6 +22,9 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
   const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', id).single()
   if (error || !profile) notFound()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  const isOwnProfile = user?.id === id
+
   const { data: requests } = await supabase
     .from('help_requests')
     .select(`*, profiles(id, username, avatar_url), request_images(id, storage_path, display_order, is_hidden)`)
@@ -36,11 +40,25 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
       <div className="bg-card border border-border rounded-2xl p-6 mb-8">
-        <div className="flex items-start gap-4">
-          <Avatar className="w-16 h-16 shrink-0">
-            <AvatarImage src={profile.avatar_url ?? undefined} />
-            <AvatarFallback className="text-xl bg-primary text-primary-foreground">{initials}</AvatarFallback>
-          </Avatar>
+        <div className="flex items-start gap-5">
+          {isOwnProfile ? (
+            <AvatarUpload
+              userId={id}
+              currentAvatarUrl={profile.avatar_url}
+              initials={initials}
+            />
+          ) : (
+            <Avatar className="w-20 h-20 shrink-0">
+              <AvatarImage src={profile.avatar_url ?? undefined} />
+              <AvatarFallback
+                className="text-2xl font-bold text-white"
+                style={{ background: 'linear-gradient(135deg, #7c3aed, #9333ea)' }}
+              >
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+          )}
+
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-2xl font-bold">{profile.username}</h1>
@@ -49,9 +67,12 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
                   <Shield className="w-3 h-3 mr-1" />Admin
                 </Badge>
               )}
+              {isOwnProfile && (
+                <span className="text-xs text-muted-foreground">(you)</span>
+              )}
             </div>
             {profile.bio && <p className="text-muted-foreground mt-2 leading-relaxed">{profile.bio}</p>}
-            <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
+            <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground flex-wrap">
               <span className="flex items-center gap-1.5"><CalendarDays className="w-4 h-4" />Joined {memberSince}</span>
               <span className="flex items-center gap-1.5"><MessageSquare className="w-4 h-4" />{requests?.length ?? 0} public requests</span>
             </div>
