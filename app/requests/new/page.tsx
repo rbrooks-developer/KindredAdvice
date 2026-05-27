@@ -137,12 +137,21 @@ export default function NewRequestPage() {
           .from('request-images')
           .upload(path, file)
 
-        if (!uploadError) {
-          await supabase.from('request_images').insert({
-            request_id: newRequest.id,
-            storage_path: path,
-            display_order: i,
-          })
+        if (uploadError) {
+          console.error('Storage upload error:', uploadError)
+          toast.error(`Image upload failed: ${uploadError.message}`)
+          continue
+        }
+
+        const { error: insertError } = await supabase.from('request_images').insert({
+          request_id: newRequest.id,
+          storage_path: path,
+          display_order: i,
+        })
+
+        if (insertError) {
+          console.error('request_images insert error:', insertError)
+          toast.error(`Could not save image record: ${insertError.message}`)
         }
       }
     }
