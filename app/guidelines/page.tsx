@@ -4,7 +4,9 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 
 export const metadata: Metadata = {
   title: 'Community Guidelines',
-  description: 'KindredAdvice community rules and values.',
+  description: 'Read the KindredAdvice community guidelines. We keep this a safe, respectful space for sharing relationship, family, and friendship advice.',
+  keywords: ['community guidelines', 'advice forum rules', 'safe advice community', 'KindredAdvice rules'],
+  robots: { index: true, follow: true },
 }
 
 export default function GuidelinesPage() {

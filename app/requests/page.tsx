@@ -1,4 +1,20 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
+
+export const metadata: Metadata = {
+  title: 'Browse Advice Requests',
+  description: 'Read real relationship, family, and friendship advice requests from the KindredAdvice community. Browse by category and offer your support.',
+  keywords: [
+    'browse advice requests', 'relationship advice forum', 'family advice forum',
+    'friendship advice', 'community advice board', 'read advice requests',
+    'help someone with advice',
+  ],
+  openGraph: {
+    title: 'Browse Advice Requests | KindredAdvice',
+    description: 'Read real relationship, family, and friendship advice requests from the KindredAdvice community.',
+    type: 'website',
+  },
+}
 import { RequestCard } from '@/components/requests/RequestCard'
 import type { HelpRequest, Category } from '@/lib/types'
 import { CATEGORY_LABELS } from '@/lib/types'

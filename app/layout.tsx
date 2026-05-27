@@ -17,16 +17,34 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://kindredadvice.com'),
   title: {
     default: 'KindredAdvice — Real Advice from Real People',
     template: '%s | KindredAdvice',
   },
   description:
-    "A safe, warm community where you can share what's on your heart and get genuine advice from people who care.",
+    "A safe, warm community where you can share what's on your heart and get genuine advice from people who care. Get real relationship, family, and friendship advice — free.",
+  keywords: [
+    'relationship advice', 'family advice', 'friendship advice', 'general advice',
+    'anonymous advice forum', 'community support', 'ask for advice online',
+    'dating advice', 'breakup advice', 'parenting advice', 'get advice from real people',
+    'kindred advice', 'KindredAdvice',
+  ],
   openGraph: {
-    title: 'KindredAdvice',
-    description: 'A safe community for relationship advice and support.',
+    title: 'KindredAdvice — Real Advice from Real People',
+    description: "A safe, warm community where you can share what's on your heart and get genuine advice from people who care.",
     siteName: 'KindredAdvice',
+    url: 'https://kindredadvice.com',
+    type: 'website',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'KindredAdvice — Real Advice from Real People',
+    description: "A safe, warm community where you can share what's on your heart and get genuine advice from people who care.",
+  },
+  alternates: {
+    canonical: 'https://kindredadvice.com',
   },
 }
 

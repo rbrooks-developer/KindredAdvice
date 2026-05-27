@@ -11,8 +11,14 @@ import { CalendarDays, MessageSquare, Shield } from 'lucide-react'
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
-  const { data } = await supabase.from('profiles').select('username').eq('id', id).single()
-  return { title: data?.username ?? 'Profile' }
+  const { data } = await supabase.from('profiles').select('username, bio').eq('id', id).single()
+  if (!data) return { title: 'Profile' }
+  const description = data.bio ?? `View ${data.username}'s requests and activity on KindredAdvice.`
+  return {
+    title: data.username,
+    description,
+    openGraph: { title: `${data.username} on KindredAdvice`, description },
+  }
 }
 
 export default async function ProfilePage({ params }: { params: Promise<{ id: string }> }) {

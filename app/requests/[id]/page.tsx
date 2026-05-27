@@ -17,8 +17,23 @@ import { Flag, Lock, AlertTriangle, Shield, Clock } from 'lucide-react'
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
-  const { data } = await supabase.from('help_requests').select('title').eq('id', id).single()
-  return { title: data?.title ?? 'Request' }
+  const { data } = await supabase.from('help_requests').select('title, body').eq('id', id).single()
+  if (!data) return { title: 'Request' }
+  const description = data.body.slice(0, 155).trimEnd() + (data.body.length > 155 ? '…' : '')
+  return {
+    title: data.title,
+    description,
+    openGraph: {
+      title: data.title,
+      description,
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary',
+      title: data.title,
+      description,
+    },
+  }
 }
 
 export default async function RequestDetailPage({ params }: { params: Promise<{ id: string }> }) {
