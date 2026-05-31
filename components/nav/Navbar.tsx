@@ -14,9 +14,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Menu, X, Shield, Sparkles } from 'lucide-react'
+import { Heart, Menu, X, Shield, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import Image from 'next/image'
 
 export function Navbar() {
   const [user, setUser] = useState<User | null>(null)
@@ -75,36 +74,54 @@ export function Navbar() {
     <header className={cn(
       'sticky top-0 z-50 transition-all duration-300',
       scrolled
-        ? 'bg-white/95 shadow-lg shadow-black/8 backdrop-blur-xl border-b border-border/40'
-        : 'bg-white/70 backdrop-blur-md border-b border-transparent'
+        ? 'bg-white/95 shadow-lg shadow-black/10 backdrop-blur-xl border-b border-border/40'
+        : 'bg-white border-b border-border/60'
     )}>
       {/* Gradient accent strip */}
-      <div className="h-[3px] w-full" style={{ background: 'linear-gradient(90deg, #7c3aed 0%, #c026d3 35%, #f43f5e 65%, #7c3aed 100%)' }} />
+      <div className="h-[4px] w-full" style={{ background: 'linear-gradient(90deg, #c47757 0%, #7c3aed 40%, #c026d3 70%, #e11d48 100%)' }} />
 
-      <div className="max-w-6xl mx-auto px-4 h-[60px] flex items-center justify-between gap-4">
+      <div className="max-w-6xl mx-auto px-5 h-[66px] flex items-center justify-between gap-4">
 
-        {/* Logo */}
-        <Link href="/" className="shrink-0">
-          <Image src="/logo.png" alt="KindredAdvice" width={44} height={44} className="rounded-full" priority />
+        {/* Brand */}
+        <Link href="/" className="flex items-center gap-2 shrink-0 group">
+          <Heart className="w-5 h-5 fill-rose-400 stroke-rose-400 group-hover:scale-110 transition-transform duration-200" />
+          <span className="text-xl font-extrabold tracking-tight">
+            <span className="text-foreground">Kindred</span>
+            <span style={{
+              background: 'linear-gradient(135deg, #7c3aed 0%, #c026d3 60%, #e11d48 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}> Advice</span>
+          </span>
         </Link>
 
         {/* Desktop nav links */}
-        <nav className="hidden md:flex items-center gap-1 flex-1 justify-center">
-          <Link href="/requests" className="text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-violet-50 px-4 py-2 rounded-lg transition-all">
-            Browse
-          </Link>
-          <Link href="/guidelines" className="text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-violet-50 px-4 py-2 rounded-lg transition-all">
-            Guidelines
-          </Link>
+        <nav className="hidden md:flex items-center gap-0.5 flex-1 justify-center">
+          {[
+            { href: '/requests', label: 'Browse' },
+            { href: '/guidelines', label: 'Guidelines' },
+          ].map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className="relative text-sm font-medium text-muted-foreground hover:text-foreground px-4 py-2 rounded-lg transition-colors hover:bg-violet-50/60"
+            >
+              {label}
+            </Link>
+          ))}
           {profile?.role === 'admin' && (
-            <Link href="/admin" className="text-sm font-semibold text-violet-600 hover:bg-violet-50 px-4 py-2 rounded-lg transition-all flex items-center gap-1.5">
+            <Link
+              href="/admin"
+              className="flex items-center gap-1.5 text-sm font-semibold text-violet-600 hover:bg-violet-50 px-4 py-2 rounded-lg transition-colors"
+            >
               <Shield className="w-3.5 h-3.5" />Admin
             </Link>
           )}
         </nav>
 
         {/* Desktop auth */}
-        <div className="hidden md:flex items-center gap-2 shrink-0">
+        <div className="hidden md:flex items-center gap-2.5 shrink-0">
           {user ? (
             <>
               <Link
@@ -116,8 +133,8 @@ export function Navbar() {
                 Ask for Advice
               </Link>
               <DropdownMenu>
-                <DropdownMenuTrigger render={<button className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring ml-1" />}>
-                  <Avatar className="w-8 h-8 ring-2 ring-violet-200 hover:ring-violet-400 transition-all cursor-pointer">
+                <DropdownMenuTrigger render={<button className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring" />}>
+                  <Avatar className="w-9 h-9 ring-2 ring-violet-200 hover:ring-violet-400 transition-all cursor-pointer">
                     <AvatarImage src={profile?.avatar_url ?? undefined} />
                     <AvatarFallback className="text-xs font-bold text-white" style={{ background: 'linear-gradient(135deg, #7c3aed, #9333ea)' }}>{initials}</AvatarFallback>
                   </Avatar>
@@ -137,7 +154,10 @@ export function Navbar() {
             </>
           ) : (
             <>
-              <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg transition-colors">
+              <Link
+                href="/login"
+                className="text-sm font-semibold text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg transition-colors"
+              >
                 Sign In
               </Link>
               <Link
@@ -166,12 +186,20 @@ export function Navbar() {
       {menuOpen && (
         <div className="md:hidden border-t border-border/50">
           {/* Mobile menu header */}
-          <div className="px-4 py-3 flex items-center gap-2" style={{ background: 'linear-gradient(135deg, #7c3aed15, #9333ea10)' }}>
-            <Image src="/logo.png" alt="KindredAdvice" width={32} height={32} className="rounded-full" />
-            <span className="text-sm font-bold gradient-text-purple">KindredAdvice</span>
+          <div className="px-5 py-4 flex items-center gap-2 bg-gradient-to-r from-violet-50/80 to-rose-50/40">
+            <Heart className="w-4 h-4 fill-rose-400 stroke-rose-400 shrink-0" />
+            <span className="text-base font-extrabold tracking-tight">
+              <span className="text-foreground">Kindred</span>
+              <span style={{
+                background: 'linear-gradient(135deg, #7c3aed 0%, #c026d3 60%, #e11d48 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}> Advice</span>
+            </span>
           </div>
 
-          <div className="bg-white/97 backdrop-blur-xl px-4 pb-4 space-y-1">
+          <div className="bg-white px-4 pb-4 space-y-1">
             <Link href="/requests" className="flex items-center text-sm font-medium py-2.5 px-3 rounded-lg hover:bg-violet-50 transition-colors" onClick={() => setMenuOpen(false)}>
               Browse Requests
             </Link>
@@ -183,7 +211,7 @@ export function Navbar() {
                 <Shield className="w-4 h-4 mr-2" />Admin Dashboard
               </Link>
             )}
-            <div className="pt-2 space-y-2">
+            <div className="pt-3 space-y-2">
               {user ? (
                 <>
                   <Link
