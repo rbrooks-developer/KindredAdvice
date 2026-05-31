@@ -80,6 +80,7 @@ export default function RootLayout({
                 <Link href="/">
                   <Image src="/logo.png" alt="KindredAdvice" width={112} height={112} className="rounded-full" />
                 </Link>
+                <div className="pt-3" />
                 <p className="text-white/60 leading-relaxed text-sm max-w-xs">
                   A safe, warm community where you can share what&apos;s on your heart and get genuine advice from people who truly care.
                 </p>
