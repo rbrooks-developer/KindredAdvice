@@ -5,6 +5,7 @@ import { Navbar } from '@/components/nav/Navbar'
 import { Toaster } from '@/components/ui/sonner'
 import { Heart, MessageSquare, Shield, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -76,14 +77,8 @@ export default function RootLayout({
 
               {/* Brand column */}
               <div className="lg:col-span-2 space-y-5">
-                <Link href="/" className="flex items-center gap-3 font-extrabold text-xl text-white">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/30"
-                    style={{ background: 'linear-gradient(135deg, #7c3aed, #9333ea)' }}
-                  >
-                    <Heart className="w-5 h-5 fill-white stroke-white" />
-                  </div>
-                  KindredAdvice
+                <Link href="/">
+                  <Image src="/logo.png" alt="KindredAdvice" width={56} height={56} className="rounded-full" />
                 </Link>
                 <p className="text-white/60 leading-relaxed text-sm max-w-xs">
                   A safe, warm community where you can share what&apos;s on your heart and get genuine advice from people who truly care.

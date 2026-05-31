@@ -14,8 +14,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Heart, Menu, X, Shield, Sparkles } from 'lucide-react'
+import { Menu, X, Shield, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import Image from 'next/image'
 
 export function Navbar() {
   const [user, setUser] = useState<User | null>(null)
@@ -83,14 +84,8 @@ export function Navbar() {
       <div className="max-w-6xl mx-auto px-4 h-[60px] flex items-center justify-between gap-4">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl shrink-0">
-          <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/40"
-            style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #9333ea 100%)' }}
-          >
-            <Heart className="w-4 h-4 fill-white stroke-white" />
-          </div>
-          <span className="gradient-text-purple hidden sm:block">KindredAdvice</span>
+        <Link href="/" className="shrink-0">
+          <Image src="/logo.png" alt="KindredAdvice" width={44} height={44} className="rounded-full" priority />
         </Link>
 
         {/* Desktop nav links */}
@@ -172,12 +167,7 @@ export function Navbar() {
         <div className="md:hidden border-t border-border/50">
           {/* Mobile menu header */}
           <div className="px-4 py-3 flex items-center gap-2" style={{ background: 'linear-gradient(135deg, #7c3aed15, #9333ea10)' }}>
-            <div
-              className="w-6 h-6 rounded-lg flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #9333ea)' }}
-            >
-              <Heart className="w-3 h-3 fill-white stroke-white" />
-            </div>
+            <Image src="/logo.png" alt="KindredAdvice" width={32} height={32} className="rounded-full" />
             <span className="text-sm font-bold gradient-text-purple">KindredAdvice</span>
           </div>
 

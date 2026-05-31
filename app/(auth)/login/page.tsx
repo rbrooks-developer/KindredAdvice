@@ -8,7 +8,8 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Heart, Check, ArrowRight } from 'lucide-react'
+import { Check, ArrowRight } from 'lucide-react'
+import Image from 'next/image'
 
 
 function LoginContent() {
@@ -47,11 +48,8 @@ function LoginContent() {
 
         {/* Logo */}
         <div className="relative z-10">
-          <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl text-white">
-            <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
-              <Heart className="w-5 h-5 fill-white stroke-white" />
-            </div>
-            KindredAdvice
+          <Link href="/">
+            <Image src="/logo.png" alt="KindredAdvice" width={64} height={64} className="rounded-full" />
           </Link>
         </div>
 
@@ -94,11 +92,8 @@ function LoginContent() {
       <div className="flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-14 xl:px-20" style={{ background: 'linear-gradient(160deg, #f5f3ff 0%, #ffffff 40%)' }}>
         {/* Mobile logo */}
         <div className="lg:hidden flex justify-center mb-8">
-          <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-violet-800 flex items-center justify-center shadow-md shadow-violet-500/30">
-              <Heart className="w-5 h-5 fill-white stroke-white" />
-            </div>
-            <span className="gradient-text-purple">KindredAdvice</span>
+          <Link href="/">
+            <Image src="/logo.png" alt="KindredAdvice" width={80} height={80} className="rounded-full" />
           </Link>
         </div>
 

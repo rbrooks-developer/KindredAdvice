@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Heart, Check, CheckCircle2, ArrowRight, MessageSquare, Image, Lock } from 'lucide-react'
+import { Check, CheckCircle2, ArrowRight, MessageSquare, Image as ImageIcon, Lock } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import Image from 'next/image'
 
 
 export default function SignupPage() {
@@ -76,11 +77,8 @@ export default function SignupPage() {
 
         {/* Logo */}
         <div className="relative z-10">
-          <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl text-white">
-            <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
-              <Heart className="w-5 h-5 fill-white stroke-white" />
-            </div>
-            KindredAdvice
+          <Link href="/">
+            <Image src="/logo.png" alt="KindredAdvice" width={64} height={64} className="rounded-full" />
           </Link>
         </div>
 
@@ -99,7 +97,7 @@ export default function SignupPage() {
           <div className="space-y-4">
             {[
               { icon: MessageSquare, text: 'Share publicly or privately' },
-              { icon: Image, text: 'Upload up to 5 supporting photos' },
+              { icon: ImageIcon, text: 'Upload up to 5 supporting photos' },
               { icon: Lock, text: 'Safe, moderated community' },
               { icon: Check, text: 'Always completely free' },
             ].map(({ icon: Icon, text }) => (
@@ -128,11 +126,8 @@ export default function SignupPage() {
       >
         {/* Mobile logo */}
         <div className="lg:hidden flex justify-center mb-8">
-          <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-violet-800 flex items-center justify-center shadow-md shadow-violet-500/30">
-              <Heart className="w-5 h-5 fill-white stroke-white" />
-            </div>
-            <span className="gradient-text-purple">KindredAdvice</span>
+          <Link href="/">
+            <Image src="/logo.png" alt="KindredAdvice" width={80} height={80} className="rounded-full" />
           </Link>
         </div>
 
