@@ -78,7 +78,7 @@ export default function RootLayout({
               {/* Brand column */}
               <div className="lg:col-span-2 space-y-5">
                 <Link href="/">
-                  <Image src="/logo.png" alt="KindredAdvice" width={56} height={56} className="rounded-full" />
+                  <Image src="/logo.png" alt="KindredAdvice" width={112} height={112} className="rounded-full" />
                 </Link>
                 <p className="text-white/60 leading-relaxed text-sm max-w-xs">
                   A safe, warm community where you can share what&apos;s on your heart and get genuine advice from people who truly care.
