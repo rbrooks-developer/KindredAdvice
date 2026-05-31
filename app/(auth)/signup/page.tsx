@@ -78,7 +78,7 @@ export default function SignupPage() {
         {/* Logo */}
         <div className="relative z-10">
           <Link href="/">
-            <Image src="/logo.png" alt="KindredAdvice" width={128} height={128} className="rounded-full" />
+            <Image src="/logo.png" alt="KindredAdvice" width={128} height={128} className="rounded-full w-32 h-32" />
           </Link>
         </div>
 
