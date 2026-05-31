@@ -17,6 +17,11 @@ import {
 import { Heart, Menu, X, Shield, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+const BRAND_STYLE: React.CSSProperties = {
+  fontFamily: 'var(--font-playfair)',
+  fontStyle: 'italic',
+}
+
 export function Navbar() {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
@@ -71,33 +76,26 @@ export function Navbar() {
   const initials = displayUsername ? displayUsername.slice(0, 2).toUpperCase() : '??'
 
   return (
-    <header className={cn(
-      'sticky top-0 z-50 transition-all duration-300',
-      scrolled
-        ? 'bg-white/95 shadow-lg shadow-black/10 backdrop-blur-xl border-b border-border/40'
-        : 'bg-white border-b border-border/60'
-    )}>
-      {/* Gradient accent strip */}
-      <div className="h-[4px] w-full" style={{ background: 'linear-gradient(90deg, #c47757 0%, #7c3aed 40%, #c026d3 70%, #e11d48 100%)' }} />
-
-      <div className="max-w-6xl mx-auto px-5 h-[66px] flex items-center justify-between gap-4">
+    <header
+      className={cn(
+        'sticky top-0 z-50 transition-all duration-300',
+        scrolled ? 'shadow-2xl shadow-black/40' : 'shadow-lg shadow-black/20'
+      )}
+      style={{ background: 'linear-gradient(135deg, #1a0533 0%, #2d0854 50%, #1e0a3c 100%)' }}
+    >
+      <div className="max-w-6xl mx-auto px-5 h-[70px] flex items-center justify-between gap-4">
 
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-2 shrink-0 group">
-          <Heart className="w-5 h-5 fill-rose-400 stroke-rose-400 group-hover:scale-110 transition-transform duration-200" />
-          <span className="text-xl font-extrabold tracking-tight">
-            <span className="text-foreground">Kindred</span>
-            <span style={{
-              background: 'linear-gradient(135deg, #7c3aed 0%, #c026d3 60%, #e11d48 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}> Advice</span>
+        <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
+          <Heart className="w-5 h-5 fill-rose-300 stroke-rose-300 group-hover:fill-rose-200 group-hover:stroke-rose-200 transition-colors duration-200" />
+          <span className="text-[1.55rem] font-bold leading-none" style={BRAND_STYLE}>
+            <span className="text-white">Kindred</span>
+            <span style={{ color: '#f9a87c' }}> Advice</span>
           </span>
         </Link>
 
         {/* Desktop nav links */}
-        <nav className="hidden md:flex items-center gap-0.5 flex-1 justify-center">
+        <nav className="hidden md:flex items-center gap-1 flex-1 justify-center">
           {[
             { href: '/requests', label: 'Browse' },
             { href: '/guidelines', label: 'Guidelines' },
@@ -105,7 +103,7 @@ export function Navbar() {
             <Link
               key={href}
               href={href}
-              className="relative text-sm font-medium text-muted-foreground hover:text-foreground px-4 py-2 rounded-lg transition-colors hover:bg-violet-50/60"
+              className="text-sm font-medium text-white/65 hover:text-white px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-200"
             >
               {label}
             </Link>
@@ -113,7 +111,7 @@ export function Navbar() {
           {profile?.role === 'admin' && (
             <Link
               href="/admin"
-              className="flex items-center gap-1.5 text-sm font-semibold text-violet-600 hover:bg-violet-50 px-4 py-2 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 text-sm font-semibold text-violet-300 hover:text-violet-200 hover:bg-white/10 px-4 py-2 rounded-lg transition-all duration-200"
             >
               <Shield className="w-3.5 h-3.5" />Admin
             </Link>
@@ -126,17 +124,21 @@ export function Navbar() {
             <>
               <Link
                 href="/requests/new"
-                className="inline-flex items-center gap-1.5 text-sm font-bold text-white px-4 py-2 rounded-xl shadow-md shadow-violet-500/30 hover:shadow-violet-500/50 hover:-translate-y-0.5 transition-all duration-200"
-                style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #9333ea 100%)' }}
+                className="inline-flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
+                style={{
+                  background: 'linear-gradient(135deg, #f9a87c 0%, #f472b6 60%, #c084fc 100%)',
+                  color: '#1a0533',
+                  boxShadow: '0 4px 20px rgba(249,168,124,0.35)',
+                }}
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 Ask for Advice
               </Link>
               <DropdownMenu>
-                <DropdownMenuTrigger render={<button className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring" />}>
-                  <Avatar className="w-9 h-9 ring-2 ring-violet-200 hover:ring-violet-400 transition-all cursor-pointer">
+                <DropdownMenuTrigger render={<button className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-white/50" />}>
+                  <Avatar className="w-9 h-9 ring-2 ring-white/30 hover:ring-white/60 transition-all cursor-pointer">
                     <AvatarImage src={profile?.avatar_url ?? undefined} />
-                    <AvatarFallback className="text-xs font-bold text-white" style={{ background: 'linear-gradient(135deg, #7c3aed, #9333ea)' }}>{initials}</AvatarFallback>
+                    <AvatarFallback className="text-xs font-bold" style={{ background: 'linear-gradient(135deg, #7c3aed, #9333ea)', color: 'white' }}>{initials}</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
@@ -156,14 +158,18 @@ export function Navbar() {
             <>
               <Link
                 href="/login"
-                className="text-sm font-semibold text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg transition-colors"
+                className="text-sm font-semibold text-white/70 hover:text-white px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-200"
               >
                 Sign In
               </Link>
               <Link
                 href="/signup"
-                className="inline-flex items-center gap-1.5 text-sm font-bold text-white px-4 py-2 rounded-xl shadow-md shadow-violet-500/30 hover:shadow-violet-500/50 hover:-translate-y-0.5 transition-all duration-200"
-                style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #9333ea 100%)' }}
+                className="inline-flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
+                style={{
+                  background: 'linear-gradient(135deg, #f9a87c 0%, #f472b6 60%, #c084fc 100%)',
+                  color: '#1a0533',
+                  boxShadow: '0 4px 20px rgba(249,168,124,0.35)',
+                }}
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 Join Free
@@ -174,7 +180,7 @@ export function Navbar() {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+          className="md:hidden p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
@@ -182,64 +188,91 @@ export function Navbar() {
         </button>
       </div>
 
+      {/* Bottom accent line */}
+      <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, #f9a87c 0%, #f472b6 40%, #c084fc 70%, #7c3aed 100%)' }} />
+
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden border-t border-border/50">
-          {/* Mobile menu header */}
-          <div className="px-5 py-4 flex items-center gap-2 bg-gradient-to-r from-violet-50/80 to-rose-50/40">
-            <Heart className="w-4 h-4 fill-rose-400 stroke-rose-400 shrink-0" />
-            <span className="text-base font-extrabold tracking-tight">
-              <span className="text-foreground">Kindred</span>
-              <span style={{
-                background: 'linear-gradient(135deg, #7c3aed 0%, #c026d3 60%, #e11d48 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}> Advice</span>
+        <div className="md:hidden" style={{ background: 'linear-gradient(180deg, #220840 0%, #1a0533 100%)' }}>
+          {/* Mobile brand */}
+          <div className="px-5 py-4 flex items-center gap-2 border-b border-white/10">
+            <Heart className="w-4 h-4 fill-rose-300 stroke-rose-300 shrink-0" />
+            <span className="text-lg font-bold leading-none" style={BRAND_STYLE}>
+              <span className="text-white">Kindred</span>
+              <span style={{ color: '#f9a87c' }}> Advice</span>
             </span>
           </div>
 
-          <div className="bg-white px-4 pb-4 space-y-1">
-            <Link href="/requests" className="flex items-center text-sm font-medium py-2.5 px-3 rounded-lg hover:bg-violet-50 transition-colors" onClick={() => setMenuOpen(false)}>
+          <div className="px-4 py-3 space-y-1">
+            <Link
+              href="/requests"
+              className="flex items-center text-sm font-medium py-2.5 px-3 rounded-lg text-white/75 hover:text-white hover:bg-white/10 transition-colors"
+              onClick={() => setMenuOpen(false)}
+            >
               Browse Requests
             </Link>
-            <Link href="/guidelines" className="flex items-center text-sm font-medium py-2.5 px-3 rounded-lg hover:bg-violet-50 transition-colors" onClick={() => setMenuOpen(false)}>
+            <Link
+              href="/guidelines"
+              className="flex items-center text-sm font-medium py-2.5 px-3 rounded-lg text-white/75 hover:text-white hover:bg-white/10 transition-colors"
+              onClick={() => setMenuOpen(false)}
+            >
               Community Guidelines
             </Link>
             {profile?.role === 'admin' && (
-              <Link href="/admin" className="flex items-center text-sm font-semibold py-2.5 px-3 rounded-lg hover:bg-violet-50 text-violet-600 transition-colors" onClick={() => setMenuOpen(false)}>
+              <Link
+                href="/admin"
+                className="flex items-center text-sm font-semibold py-2.5 px-3 rounded-lg text-violet-300 hover:text-violet-200 hover:bg-white/10 transition-colors"
+                onClick={() => setMenuOpen(false)}
+              >
                 <Shield className="w-4 h-4 mr-2" />Admin Dashboard
               </Link>
             )}
-            <div className="pt-3 space-y-2">
-              {user ? (
-                <>
-                  <Link
-                    href="/requests/new"
-                    className="flex items-center justify-center gap-2 w-full text-sm font-bold text-white py-2.5 rounded-xl shadow-md"
-                    style={{ background: 'linear-gradient(135deg, #7c3aed, #9333ea)' }}
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <Sparkles className="w-4 h-4" />Ask for Advice
-                  </Link>
-                  <Button variant="outline" className="w-full" onClick={() => { setMenuOpen(false); handleSignOut() }}>Sign Out</Button>
-                </>
-              ) : (
-                <div className="flex gap-2">
-                  <Link href="/login" className="flex-1 text-center text-sm font-medium py-2.5 rounded-xl border border-border hover:bg-muted/60 transition-colors" onClick={() => setMenuOpen(false)}>
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="flex-1 flex items-center justify-center gap-1.5 text-sm font-bold text-white py-2.5 rounded-xl shadow-md"
-                    style={{ background: 'linear-gradient(135deg, #7c3aed, #9333ea)' }}
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />Join Free
-                  </Link>
-                </div>
-              )}
-            </div>
+          </div>
+
+          <div className="px-4 pb-5 pt-1 space-y-2">
+            {user ? (
+              <>
+                <Link
+                  href="/requests/new"
+                  className="flex items-center justify-center gap-2 w-full text-sm font-bold py-3 rounded-xl"
+                  style={{
+                    background: 'linear-gradient(135deg, #f9a87c 0%, #f472b6 60%, #c084fc 100%)',
+                    color: '#1a0533',
+                  }}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <Sparkles className="w-4 h-4" />Ask for Advice
+                </Link>
+                <Button
+                  variant="outline"
+                  className="w-full border-white/20 text-white/80 hover:bg-white/10 hover:text-white bg-transparent"
+                  onClick={() => { setMenuOpen(false); handleSignOut() }}
+                >
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <div className="flex gap-2">
+                <Link
+                  href="/login"
+                  className="flex-1 text-center text-sm font-semibold py-2.5 rounded-xl border border-white/20 text-white/80 hover:bg-white/10 hover:text-white transition-colors"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/signup"
+                  className="flex-1 flex items-center justify-center gap-1.5 text-sm font-bold py-2.5 rounded-xl"
+                  style={{
+                    background: 'linear-gradient(135deg, #f9a87c 0%, #f472b6 60%, #c084fc 100%)',
+                    color: '#1a0533',
+                  }}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <Sparkles className="w-3.5 h-3.5" />Join Free
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       )}
