@@ -76,8 +76,8 @@ Deno.serve(async (req) => {
 
   const requestUrl = `${SITE_URL}/requests/${requestId}`
   const subject = isPrivate
-    ? `[Private] New advice request: ${title}`
-    : `New advice request: ${title}`
+    ? `Private request needs your attention: ${title}`
+    : `New ${categoryLabel} advice request: ${title}`
 
   const html = `
 <!DOCTYPE html>
