@@ -34,6 +34,7 @@ export default function NewRequestPage() {
   const [images, setImages] = useState<File[]>([])
   const [previews, setPreviews] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
+  const [showErrors, setShowErrors] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
   const supabase = createClient()
@@ -71,19 +72,15 @@ export default function NewRequestPage() {
     setPreviews((prev) => prev.filter((_, i) => i !== index))
   }
 
+  const titleError = title.trim().length > 0 && title.trim().length < 5 ? 'Title must be at least 5 characters.' : title.trim().length === 0 ? 'Title is required.' : null
+  const categoryError = !category ? 'Please select a category.' : null
+  const bodyError = body.trim().length > 0 && body.trim().length < 10 ? 'Please describe your situation in more detail (at least 10 characters).' : body.trim().length === 0 ? 'Your situation is required.' : null
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!category) {
-      toast.error('Please select a category.')
-      return
-    }
-    if (title.trim().length < 5) {
-      toast.error('Title must be at least 5 characters.')
-      return
-    }
-    if (body.trim().length < 10) {
-      toast.error('Please describe your situation in more detail.')
+    if (titleError || categoryError || bodyError) {
+      setShowErrors(true)
       return
     }
 
@@ -191,16 +188,21 @@ export default function NewRequestPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               maxLength={200}
-              required
+              className={showErrors && titleError ? 'border-destructive focus-visible:ring-destructive' : ''}
             />
-            <p className="text-xs text-muted-foreground text-right">{title.length}/200</p>
+            <div className="flex justify-between items-center">
+              {showErrors && titleError
+                ? <p className="text-xs text-destructive">{titleError}</p>
+                : <span />}
+              <p className="text-xs text-muted-foreground">{title.length}/200</p>
+            </div>
           </div>
 
           {/* Category */}
           <div className="space-y-2">
             <Label htmlFor="category">Category <span className="text-destructive">*</span></Label>
-            <Select onValueChange={(v) => setCategory((v ?? '') as Category)} required>
-              <SelectTrigger id="category">
+            <Select onValueChange={(v) => setCategory((v ?? '') as Category)}>
+              <SelectTrigger id="category" className={showErrors && categoryError ? 'border-destructive focus:ring-destructive' : ''}>
                 <SelectValue placeholder="What kind of advice do you need?" />
               </SelectTrigger>
               <SelectContent>
@@ -209,6 +211,9 @@ export default function NewRequestPage() {
                 ))}
               </SelectContent>
             </Select>
+            {showErrors && categoryError && (
+              <p className="text-xs text-destructive">{categoryError}</p>
+            )}
           </div>
 
           {/* Body */}
@@ -221,9 +226,14 @@ export default function NewRequestPage() {
               onChange={(e) => setBody(e.target.value)}
               rows={8}
               maxLength={5000}
-              required
+              className={showErrors && bodyError ? 'border-destructive focus-visible:ring-destructive' : ''}
             />
-            <p className="text-xs text-muted-foreground text-right">{body.length}/5000</p>
+            <div className="flex justify-between items-center">
+              {showErrors && bodyError
+                ? <p className="text-xs text-destructive">{bodyError}</p>
+                : <span />}
+              <p className="text-xs text-muted-foreground">{body.length}/5000</p>
+            </div>
           </div>
 
           {/* Images */}
@@ -326,7 +336,7 @@ export default function NewRequestPage() {
           type="submit"
           size="lg"
           className="w-full"
-          disabled={loading || !category || title.trim().length < 5 || body.trim().length < 10}
+          disabled={loading}
         >
           {loading ? 'Posting your request…' : 'Post Request'}
         </Button>
