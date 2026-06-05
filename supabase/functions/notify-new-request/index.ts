@@ -160,24 +160,32 @@ Deno.serve(async (req) => {
 </body>
 </html>`
 
-  const sendResults = await Promise.allSettled(
-    adminEmails.map((email) =>
-      fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ from: FROM_EMAIL, to: [email], subject, html }),
-      })
-    )
-  )
+  console.log(`Sending to ${adminEmails.length} admin(s): ${adminEmails.join(', ')}`)
+  console.log(`RESEND_API_KEY set: ${!!RESEND_API_KEY}`)
 
-  const failures = sendResults.filter((r) => r.status === 'rejected').length
-  console.log(`Notified ${adminEmails.length - failures}/${adminEmails.length} admins for request ${requestId}`)
+  let notified = 0
+  for (const email of adminEmails) {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ from: FROM_EMAIL, to: [email], subject, html }),
+    })
+    if (res.ok) {
+      notified++
+      console.log(`Email sent to ${email}`)
+    } else {
+      const errBody = await res.text()
+      console.error(`Resend error for ${email} — HTTP ${res.status}: ${errBody}`)
+    }
+  }
+
+  console.log(`Done: notified ${notified}/${adminEmails.length} admins for request ${requestId}`)
 
   return new Response(
-    JSON.stringify({ notified: adminEmails.length - failures, total: adminEmails.length }),
+    JSON.stringify({ notified, total: adminEmails.length }),
     { status: 200, headers: { 'Content-Type': 'application/json' } }
   )
 })
