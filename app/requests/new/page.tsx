@@ -34,7 +34,6 @@ export default function NewRequestPage() {
   const [images, setImages] = useState<File[]>([])
   const [previews, setPreviews] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
-  const [showErrors, setShowErrors] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
   const supabase = createClient()
@@ -72,17 +71,16 @@ export default function NewRequestPage() {
     setPreviews((prev) => prev.filter((_, i) => i !== index))
   }
 
-  const titleError = title.trim().length > 0 && title.trim().length < 5 ? 'Title must be at least 5 characters.' : title.trim().length === 0 ? 'Title is required.' : null
-  const categoryError = !category ? 'Please select a category.' : null
-  const bodyError = body.trim().length > 0 && body.trim().length < 10 ? 'Please describe your situation in more detail (at least 10 characters).' : body.trim().length === 0 ? 'Your situation is required.' : null
+  const requirements = [
+    { label: 'Add a title (at least 5 characters)', met: title.trim().length >= 5 },
+    { label: 'Select a category', met: !!category },
+    { label: 'Describe your situation (at least 10 characters)', met: body.trim().length >= 10 },
+  ]
+  const isFormValid = requirements.every((r) => r.met)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    if (titleError || categoryError || bodyError) {
-      setShowErrors(true)
-      return
-    }
+    if (!isFormValid) return
 
     setLoading(true)
 
@@ -188,21 +186,15 @@ export default function NewRequestPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               maxLength={200}
-              className={showErrors && titleError ? 'border-destructive focus-visible:ring-destructive' : ''}
             />
-            <div className="flex justify-between items-center">
-              {showErrors && titleError
-                ? <p className="text-xs text-destructive">{titleError}</p>
-                : <span />}
-              <p className="text-xs text-muted-foreground">{title.length}/200</p>
-            </div>
+            <p className="text-xs text-muted-foreground text-right">{title.length}/200</p>
           </div>
 
           {/* Category */}
           <div className="space-y-2">
             <Label htmlFor="category">Category <span className="text-destructive">*</span></Label>
             <Select onValueChange={(v) => setCategory((v ?? '') as Category)}>
-              <SelectTrigger id="category" className={showErrors && categoryError ? 'border-destructive focus:ring-destructive' : ''}>
+              <SelectTrigger id="category">
                 <SelectValue placeholder="What kind of advice do you need?" />
               </SelectTrigger>
               <SelectContent>
@@ -211,9 +203,6 @@ export default function NewRequestPage() {
                 ))}
               </SelectContent>
             </Select>
-            {showErrors && categoryError && (
-              <p className="text-xs text-destructive">{categoryError}</p>
-            )}
           </div>
 
           {/* Body */}
@@ -226,14 +215,8 @@ export default function NewRequestPage() {
               onChange={(e) => setBody(e.target.value)}
               rows={8}
               maxLength={5000}
-              className={showErrors && bodyError ? 'border-destructive focus-visible:ring-destructive' : ''}
             />
-            <div className="flex justify-between items-center">
-              {showErrors && bodyError
-                ? <p className="text-xs text-destructive">{bodyError}</p>
-                : <span />}
-              <p className="text-xs text-muted-foreground">{body.length}/5000</p>
-            </div>
+            <p className="text-xs text-muted-foreground text-right">{body.length}/5000</p>
           </div>
 
           {/* Images */}
@@ -332,11 +315,27 @@ export default function NewRequestPage() {
           </div>
         </div>
 
+        {!isFormValid && (
+          <div className="rounded-xl border border-border bg-card px-5 py-4 space-y-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Before you can post:</p>
+            <ul className="space-y-1.5">
+              {requirements.map((r) => (
+                <li key={r.label} className={`flex items-center gap-2 text-sm ${r.met ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+                  <span className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold ${r.met ? 'bg-green-100 text-green-600' : 'bg-destructive/10 text-destructive'}`}>
+                    {r.met ? '✓' : '✗'}
+                  </span>
+                  {r.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <Button
           type="submit"
           size="lg"
           className="w-full"
-          disabled={loading}
+          disabled={loading || !isFormValid}
         >
           {loading ? 'Posting your request…' : 'Post Request'}
         </Button>
